@@ -7,7 +7,7 @@ import { Button, Input, Card, message } from 'antd';
 import { authService } from '../services/authService';
 import { getErrorMessage } from '../lib/errorMessage';
 
-// Validasi schema menggunakan Zod
+// Validasi skema menggunakan Zod
 const loginSchema = z.object({
   email: z.string().email('Format email tidak valid'),
   password: z.string().min(6, 'Password minimal 6 karakter'),
@@ -68,7 +68,7 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Password Field dengan Controller */}
+          {/* Password field pake controller */}
           <div>
             <Controller
               name="password"

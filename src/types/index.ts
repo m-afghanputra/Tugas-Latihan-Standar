@@ -1,4 +1,4 @@
-// Definisi interface sesuai standar LSKK
+// Definisi interface menurut standar
 export interface ImetaPagination {
   totalPages: number;
   totalData: number;

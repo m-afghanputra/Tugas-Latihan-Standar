@@ -1,8 +1,6 @@
 import type { Buku, BukuPayload, IResponseEntity } from '../types';
 
-// MOCK SEMENTARA: backend belum tersedia.
-// Saat backend siap, ganti isi fungsi di file ini dengan pemanggilan `api`
-// dari src/lib/axios.ts. Bentuk kembaliannya sudah IResponseEntity.
+// sementara backend belum tersedia.
 let books: Buku[] = [
   { id: '1', judul: 'Laskar Pelangi', penulis: 'Andrea Hirata', tahun: 2005 },
   {

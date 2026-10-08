@@ -7,7 +7,7 @@ import { useBukuDetail, useMutateBuku } from '../hooks/useBuku';
 import { getErrorMessage } from '../lib/errorMessage';
 import { Button, Input, Card, message } from 'antd';
 
-// Schema validasi menggunakan Zod
+// Skema validasi menggunakan Zod
 const bukuSchema = z.object({
   judul: z.string().min(3, 'Judul minimal 3 karakter'),
   penulis: z.string().min(3, 'Nama penulis minimal 3 karakter'),

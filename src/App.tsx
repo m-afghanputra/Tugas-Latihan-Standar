@@ -3,12 +3,12 @@ import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom';
 import { Spin } from 'antd';
 import { useAuthStore } from './store/authStore';
 
-// Lazy loading: tiap halaman jadi chunk terpisah (standar LSKK §3)
+// Lazy loading tiap halaman
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const BukuListPage = lazy(() => import('./pages/BukuListPage'));
 const BukuFormPage = lazy(() => import('./pages/BukuFormPage'));
 
-// Komponen pelindung rute (Guard)
+// Komponen pelindung rute
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
 

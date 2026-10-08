@@ -1,9 +1,9 @@
 import type { IResponseEntity, LoginData, LoginPayload } from '../types';
 
-// MOCK SEMENTARA: backend belum tersedia. Ganti dengan pemanggilan `api` saat siap.
+// Sementara backend belum ada ganti pemanggilan 'api' kalau udah ada
 export const authService = {
   login: async (payload: LoginPayload): Promise<IResponseEntity<LoginData>> => {
-    void payload; // belum dipakai: mock tidak memeriksa kredensial
+    void payload; // belum kepake
     return {
       code: 200,
       status: true,

@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { bukuService } from '../services/bukuService';
 import type { Buku, BukuPayload, IResponseEntity } from '../types';
 
-// Hook untuk mengambil data list buku dengan pagination
+// Hook buat mengambil data list buku pake pagination
 export const useBukuList = (page: number, limit: number) => {
   return useQuery<IResponseEntity<Buku[]>>({
     queryKey: ['buku', page, limit],
@@ -10,7 +10,7 @@ export const useBukuList = (page: number, limit: number) => {
   });
 };
 
-// Hook untuk mengambil detail satu buku (mode edit)
+// Hook buat mengambil detail satu buku (mode edit)
 export const useBukuDetail = (id: string | undefined) => {
   return useQuery<IResponseEntity<Buku>>({
     queryKey: ['buku', id],
@@ -24,7 +24,7 @@ interface IMutateBukuVariables {
   payload: BukuPayload;
 }
 
-// Hook untuk menambah (tanpa id) atau mengedit (dengan id) buku
+// Hook buat menambah atau mengedit buku
 export const useMutateBuku = () => {
   const queryClient = useQueryClient();
 
