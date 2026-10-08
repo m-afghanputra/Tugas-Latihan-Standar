@@ -1,21 +1,31 @@
-import { createHashRouter, RouterProvider, Navigate } from 'react-router-dom';
+import { lazy, Suspense, type ReactNode } from 'react';
+import { createHashRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { Spin } from 'antd';
 import { useAuthStore } from './store/authStore';
-import LoginPage from './pages/LoginPage';
-import BukuListPage from './pages/BukuListPage';
-import BukuFormPage from './pages/BukuFormPage';
 
-// Komponen pelindung rute (Guard)
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+// Lazy loading tiap halaman
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const BukuListPage = lazy(() => import('./pages/BukuListPage'));
+const BukuFormPage = lazy(() => import('./pages/BukuFormPage'));
+
+// Komponen pelindung rute
+function ProtectedRoute({ children }: { children: ReactNode }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated());
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return <>{children}</>;
 }
 
-// Definisi rute menggunakan CreateHashRouter
+const PageLoader = (
+  <div className="flex min-h-screen items-center justify-center">
+    <Spin size="large" />
+  </div>
+);
+
+// Definisi rute menggunakan createHashRouter
 const router = createHashRouter([
   {
     path: '/login',
@@ -37,9 +47,20 @@ const router = createHashRouter([
       </ProtectedRoute>
     ),
   },
-  // Tambahkan rute edit di sini nanti: path: '/buku/edit/:id'
+  {
+    path: '/buku/edit/:id',
+    element: (
+      <ProtectedRoute>
+        <BukuFormPage />
+      </ProtectedRoute>
+    ),
+  },
 ]);
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Suspense fallback={PageLoader}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
 }

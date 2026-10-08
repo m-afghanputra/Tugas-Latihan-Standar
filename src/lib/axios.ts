@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// Membuat instance Axios terpusat
+// Membuat instance axios pusat
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
   headers: {
@@ -9,7 +9,7 @@ const api = axios.create({
   },
 });
 
-// Interceptor untuk menyisipkan token JWT secara otomatis
+// Interceptor buat menyisipkan token jwt otomatis
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
