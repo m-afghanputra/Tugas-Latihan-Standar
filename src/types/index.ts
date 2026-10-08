@@ -15,7 +15,7 @@ export interface IResponseEntity<T> {
   meta?: ImetaPagination;
 }
 
-// Tipe data untuk entitas Buku
+// Entitas Buku
 export interface Buku {
   id: string;
   judul: string;
@@ -23,8 +23,21 @@ export interface Buku {
   tahun: number;
 }
 
-// Tipe data untuk response list buku (asumsi backend mengembalikan array di dalam 'data')
-export interface BukuListData {
-  items: Buku[];
-  meta: ImetaPagination;
+// Payload untuk membuat / mengubah buku
+export type BukuPayload = Omit<Buku, 'id'>;
+
+// Entitas user & kontrak auth
+export interface User {
+  id: string;
+  name: string;
+}
+
+export interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+export interface LoginData {
+  token: string;
+  user: User;
 }

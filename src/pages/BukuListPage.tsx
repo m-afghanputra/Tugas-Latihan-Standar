@@ -3,24 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Table, Button, Pagination, Card, message, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { useBukuList, useDeleteBuku } from '../hooks/useBuku';
+import { getErrorMessage } from '../lib/errorMessage';
 import type { Buku } from '../types';
-
-const initialDummyBuku: Buku[] = [
-  { id: '1', judul: 'Laskar Pelangi', penulis: 'Andrea Hirata', tahun: 2005 },
-  { id: '2', judul: 'Bumi Manusia', penulis: 'Pramoedya Ananta Toer', tahun: 1980 },
-  { id: '3', judul: 'Pulang', penulis: 'Tere Liye', tahun: 2015 },
-  { id: '4', judul: 'Laut Bercerita', penulis: 'Leila S. Chudori', tahun: 2017 },
-  { id: '5', judul: 'Cantik Itu Luka', penulis: 'Eka Kurniawan', tahun: 2002 },
-];
 
 export default function BukuListPage() {
   const navigate = useNavigate();
   const logout = useAuthStore((state) => state.logout);
-  
-  const [daftarBuku, setDaftarBuku] = useState<Buku[]>(initialDummyBuku);
+
   const [page, setPage] = useState(1);
-  const [idBukuDihapus, setIdBukuDihapus] = useState<string | null>(null);
+  const [deletingBookId, setDeletingBookId] = useState<string | null>(null);
   const limit = 10;
+
+  const { data, isLoading } = useBukuList(page, limit);
+  const deleteBuku = useDeleteBuku();
 
   const handleLogout = () => {
     logout();
@@ -28,22 +24,17 @@ export default function BukuListPage() {
     message.info('Anda telah keluar');
   };
 
-  const tampilkanKonfirmasiHapus = (id: string) => {
-    setIdBukuDihapus(id);
-  };
+  const handleConfirmDelete = async () => {
+    if (!deletingBookId) return;
 
-  const handleHapus = () => {
-    if (!idBukuDihapus) return;
-
-    const bukuSetelahDihapus = daftarBuku.filter((buku) => buku.id !== idBukuDihapus);
-    setDaftarBuku(bukuSetelahDihapus);
-    
-    message.success('Buku berhasil dihapus');
-    setIdBukuDihapus(null);
-  };
-
-  const handleBatalHapus = () => {
-    setIdBukuDihapus(null);
+    try {
+      const response = await deleteBuku.mutateAsync(deletingBookId);
+      message.success(response.message);
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    } finally {
+      setDeletingBookId(null);
+    }
   };
 
   const columns: ColumnsType<Buku> = [
@@ -56,16 +47,16 @@ export default function BukuListPage() {
       width: 150,
       render: (_, record) => (
         <div className="space-x-2">
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             onClick={() => navigate(`/buku/edit/${record.id}`)}
           >
             Edit
           </Button>
-          <Button 
-            type="link" 
+          <Button
+            type="link"
             danger
-            onClick={() => tampilkanKonfirmasiHapus(record.id)}
+            onClick={() => setDeletingBookId(record.id)}
           >
             Hapus
           </Button>
@@ -76,7 +67,7 @@ export default function BukuListPage() {
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-wrap gap-2 justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Daftar Buku</h1>
         <div className="space-x-2">
           <Button type="primary" onClick={() => navigate('/buku/tambah')}>
@@ -89,17 +80,18 @@ export default function BukuListPage() {
       </div>
 
       <Card>
-        <Table 
-          columns={columns} 
-          dataSource={daftarBuku} 
-          rowKey="id" 
+        <Table
+          columns={columns}
+          dataSource={data?.data}
+          rowKey="id"
+          loading={isLoading}
           pagination={false}
         />
-        
+
         <div className="flex justify-end mt-4">
           <Pagination
             current={page}
-            total={daftarBuku.length}
+            total={data?.meta?.totalData}
             pageSize={limit}
             onChange={(newPage) => setPage(newPage)}
             showSizeChanger={false}
@@ -109,9 +101,9 @@ export default function BukuListPage() {
 
       <Modal
         title="Konfirmasi Hapus"
-        open={idBukuDihapus !== null}
-        onOk={handleHapus}
-        onCancel={handleBatalHapus}
+        open={deletingBookId !== null}
+        onOk={handleConfirmDelete}
+        onCancel={() => setDeletingBookId(null)}
         okText="Ya, Hapus"
         cancelText="Batal"
         okButtonProps={{ danger: true }}
