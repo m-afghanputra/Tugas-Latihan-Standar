@@ -4,6 +4,8 @@ import * as z from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Button, Input, Card, message } from 'antd';
+import { authService } from '../services/authService';
+import { getErrorMessage } from '../lib/errorMessage';
 
 // Validasi schema menggunakan Zod
 const loginSchema = z.object({
@@ -17,29 +19,28 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
 
-  const { 
-    control, 
-    handleSubmit, 
-    formState: { errors, isSubmitting } 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
-    }
+    },
   });
 
-  const onSubmit = async (_data: LoginFormValues) => {
+  const onSubmit = async (values: LoginFormValues) => {
     try {
-      // Simulasi delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await authService.login(values);
+      if (!response.data) throw new Error('Response login tidak berisi data');
 
-      // Dummy data untuk latihan
-      login('dummy-jwt-token-12345', { id: '1', name: 'Peserta PKL LSKK' });
-      message.success('Login berhasil (Mode Dummy)');
+      login(response.data.token, response.data.user);
+      message.success(response.message);
       navigate('/');
     } catch (error) {
-      message.error('Login gagal');
+      message.error(getErrorMessage(error));
     }
   };
 
@@ -53,40 +54,44 @@ export default function LoginPage() {
               name="email"
               control={control}
               render={({ field }) => (
-                <Input 
-                  placeholder="Email" 
+                <Input
+                  placeholder="Email"
                   {...field}
                   status={errors.email ? 'error' : ''}
                 />
               )}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
-          
+
           {/* Password Field dengan Controller */}
           <div>
             <Controller
               name="password"
               control={control}
               render={({ field }) => (
-                <Input.Password 
-                  placeholder="Password" 
+                <Input.Password
+                  placeholder="Password"
                   {...field}
                   status={errors.password ? 'error' : ''}
                 />
               )}
             />
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
-          <Button 
-            type="primary" 
-            htmlType="submit" 
-            loading={isSubmitting} 
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={isSubmitting}
             className="w-full"
           >
             Masuk

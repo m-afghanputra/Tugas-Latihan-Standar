@@ -1,9 +1,6 @@
 import { create } from 'zustand';
-
-interface User {
-  id: string;
-  name: string;
-}
+import { persist } from 'zustand/middleware';
+import type { User } from '../types';
 
 interface AuthState {
   token: string | null;
@@ -13,10 +10,19 @@ interface AuthState {
   isAuthenticated: () => boolean;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => ({
-  token: null,
-  user: null,
-  login: (token, user) => set({ token, user }),
-  logout: () => set({ token: null, user: null }),
-  isAuthenticated: () => get().token !== null,
-}));
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      token: null,
+      user: null,
+      login: (token, user) => set({ token, user }),
+      logout: () => set({ token: null, user: null }),
+      isAuthenticated: () => get().token !== null,
+    }),
+    {
+      name: 'auth-storage',
+      // Simpan hanya data, bukan fungsi.
+      partialize: (state) => ({ token: state.token, user: state.user }),
+    },
+  ),
+);
