@@ -44,7 +44,8 @@ export default function BukuListPage() {
     {
       title: 'Aksi',
       key: 'aksi',
-      width: 150,
+      width: 95,
+      fixed: 'end',
       render: (_, record) => (
         <div className="space-x-2">
           <Button
@@ -53,7 +54,7 @@ export default function BukuListPage() {
           >
             Edit
           </Button>
-          <Button
+          <Button 
             type="link"
             danger
             onClick={() => setDeletingBookId(record.id)}
