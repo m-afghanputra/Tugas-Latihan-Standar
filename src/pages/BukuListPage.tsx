@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { Table, Button, Pagination, Card, message, Modal } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Button, Pagination, Card, message, Modal } from 'antd';
+import { DataGrid, type GridColDef } from '@mui/x-data-grid';
 import { useBukuList, useDeleteBuku } from '../hooks/useBuku';
 import { getErrorMessage } from '../lib/errorMessage';
 import type { Buku } from '../types';
@@ -37,34 +37,35 @@ export default function BukuListPage() {
     }
   };
 
-  const columns: ColumnsType<Buku> = [
-    { title: 'Judul', dataIndex: 'judul', key: 'judul' },
-    { title: 'Penulis', dataIndex: 'penulis', key: 'penulis' },
-    { title: 'Tahun', dataIndex: 'tahun', key: 'tahun', width: 100 },
+  const columns= useMemo<GridColDef<Buku>[]> (() => [
+    { headerName: 'Judul', field: 'judul', flex: 1, minWidth: 150 },
+    { headerName: 'Penulis', field: 'penulis', flex: 1, minWidth: 150 },
+    { headerName: 'Tahun', field: 'tahun', width: 100 },
     {
-      title: 'Aksi',
-      key: 'aksi',
-      width: 95,
-      fixed: 'end',
-      render: (_, record) => (
+      headerName: 'Aksi',
+      field: 'aksi',
+      width: 160,
+      renderCell: (params) => (
         <div className="space-x-2">
           <Button
             type="link"
-            onClick={() => navigate(`/buku/edit/${record.id}`)}
+            onClick={() => navigate(`/buku/edit/${params.row.id}`)}
           >
             Edit
           </Button>
           <Button 
             type="link"
             danger
-            onClick={() => setDeletingBookId(record.id)}
+            onClick={() => setDeletingBookId(params.row.id)}
           >
             Hapus
           </Button>
         </div>
       ),
     },
-  ];
+  ],
+  [navigate]
+)
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -81,13 +82,11 @@ export default function BukuListPage() {
       </div>
 
       <Card>
-        <Table
+        <DataGrid
           columns={columns}
-          dataSource={data?.data}
-          rowKey="id"
+          rows={data?.data ?? []} 
           loading={isLoading}
-          pagination={false}
-          scroll={{x: 350}}
+          hideFooter
         />
 
         <div className="flex justify-end mt-4">
