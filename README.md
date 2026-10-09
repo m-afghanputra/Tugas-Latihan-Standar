@@ -10,7 +10,7 @@ npm run dev
 ```
 
 Backend belum tersedia. Data list, form, dan login memakai mock sementara di
-`src/services/` (bentuk kembalian sudah `IResponseEntity`). Saat backend siap, ganti isinya
+`src/services/` (bentuk kembalian sudah `IResponseEntity`). Kalau Backend udah ada, ganti isinya
 dengan pemanggilan `api` dari `src/lib/axios.ts`.
 
 ## Script
