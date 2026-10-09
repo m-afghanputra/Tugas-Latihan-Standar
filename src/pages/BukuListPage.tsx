@@ -86,6 +86,7 @@ export default function BukuListPage() {
           rowKey="id"
           loading={isLoading}
           pagination={false}
+          scroll={{x: 350}}
         />
 
         <div className="flex justify-end mt-4">
