@@ -108,7 +108,7 @@ export default function BukuFormPage() {
                 <Input
                   type="number"
                   {...field}
-                  value={field.value as number}
+                  value={field.value as string | number}
                   status={errors.tahun ? 'error' : ''}
                 />
               )}
