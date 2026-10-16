@@ -5,21 +5,18 @@ import * as z from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBukuDetail, useMutateBuku } from '../hooks/useBuku';
 import { getErrorMessage } from '../lib/errorMessage';
-import { Alert, Button, Input, Card, Spin, message } from 'antd';
-
+import { Alert, Button, Input, Card, Spin, message, InputNumber } from 'antd';
 
 // Skema validasi menggunakan Zod
 const bukuSchema = z.object({
   judul: z.string().min(3, 'Judul minimal 3 karakter'),
   penulis: z.string().min(3, 'Nama penulis minimal 3 karakter'),
-  tahun: z.coerce
-    .number()
+  tahun: z
+    .number({ error: 'Tahun wajib diisi' })
     .min(1900, 'Tahun tidak valid')
     .max(new Date().getFullYear(), 'Tahun tidak boleh di masa depan'),
 });
 
-// z.coerce.number() di Zod v4: input bertipe unknown, output bertipe number
-type BukuFormInput = z.input<typeof bukuSchema>;
 type BukuFormValues = z.output<typeof bukuSchema>;
 
 export default function BukuFormPage() {
@@ -35,7 +32,7 @@ export default function BukuFormPage() {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<BukuFormInput, unknown, BukuFormValues>({
+  } = useForm<BukuFormValues>({
     resolver: zodResolver(bukuSchema),
     defaultValues: {
       tahun: new Date().getFullYear(),
@@ -62,28 +59,26 @@ export default function BukuFormPage() {
     }
   };
 
-  
-if  (isEditMode &&  isLoading) {
-  return (
-    <div className="flex justify-center p-8">
-      <Spin size="large" />
-    </div>
-  );
-}
+  if (isEditMode && isLoading) {
+    return (
+      <div className="flex justify-center p-8">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
-if (isEditMode && isError) {
-  return (
-    <div className="p-4 max-w-2xi mx-auto">
-      <Alert
-        type="error"
-        showIcon
-        title={getErrorMessage(error)}
-        action={<Button onClick={() => navigate('/')}>Kembali</Button>}
-      />
-    </div>
-  );
-}
-
+  if (isEditMode && isError) {
+    return (
+      <div className="p-4 max-w-2xl mx-auto">
+        <Alert
+          type="error"
+          showIcon
+          title={getErrorMessage(error)}
+          action={<Button onClick={() => navigate('/')}>Kembali</Button>}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
@@ -129,10 +124,9 @@ if (isEditMode && isError) {
               name="tahun"
               control={control}
               render={({ field }) => (
-                <Input
-                  type="number"
+                <InputNumber
                   {...field}
-                  value={field.value as string | number}
+                  className="w-full"
                   status={errors.tahun ? 'error' : ''}
                 />
               )}

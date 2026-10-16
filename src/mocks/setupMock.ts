@@ -42,6 +42,7 @@ export const setupMock = (api: AxiosInstance) => {
       },
     };
     return [200, response];
+    
   });
 
   mock.onGet(/\/buku\/\w+/).reply((config) => {
