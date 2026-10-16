@@ -1,31 +1,6 @@
 import api from '../lib/axios.ts';
 import type { Buku, BukuPayload, IResponseEntity } from '../types';
 
-// sementara backend belum tersedia.
-let books: Buku[] = [
-  { id: '1', judul: 'Laskar Pelangi', penulis: 'Andrea Hirata', tahun: 2005 },
-  {
-    id: '2',
-    judul: 'Bumi Manusia',
-    penulis: 'Pramoedya Ananta Toer',
-    tahun: 1980,
-  },
-  { id: '3', judul: 'Pulang', penulis: 'Tere Liye', tahun: 2015 },
-  {
-    id: '4',
-    judul: 'Laut Bercerita',
-    penulis: 'Leila S. Chudori',
-    tahun: 2017,
-  },
-  { id: '5', judul: 'Cantik Itu Luka', penulis: 'Eka Kurniawan', tahun: 2002 },
-];
-
-const findBook = (id: string): Buku => {
-  const book = books.find((item) => item.id === id);
-  if (!book) throw new Error('Buku tidak ditemukan');
-  return book;
-};
-
 export const bukuService = {
   getList: async (
     page: number,
@@ -56,8 +31,7 @@ export const bukuService = {
   },
 
   remove: async (id: string): Promise<IResponseEntity<undefined>> => {
-    findBook(id);
-    books = books.filter((item) => item.id !== id);
-    return { code: 200, status: true, message: 'Buku berhasil dihapus' };
+    const response = await api.delete<IResponseEntity<undefined>>(`/buku/${id}`);
+    return response.data;
   },
 };

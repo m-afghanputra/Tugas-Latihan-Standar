@@ -100,4 +100,23 @@ mock.onPut(/\/buku\/\w+/).reply((config) => {
   };
   return [200, response];
 });
+
+  mock.onDelete(/\/buku\/\w+/).reply((config) => {
+  const id = config.url?.split('/').pop();
+  const index = books.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return [
+      404,
+      { code: 404, status: false, message: 'Buku tidak ditemukan' },
+    ];
+  }
+  books.splice(index, 1);
+  const response: IResponseEntity<undefined> = {
+    code: 200,
+    status: true,
+    message: 'Buku berhasil dihapus',
+  };
+  return [200, response]
+});
 };
