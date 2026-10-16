@@ -41,4 +41,24 @@ export const setupMock = (api: AxiosInstance) => {
     };
     return [200, response];
   });
+
+  mock.onGet(/\/buku\/\w+/).reply((config) => {
+    const id = config.url?.split('/').pop();
+    const book = books.find((item) => item.id === id);
+
+    if (!book) {
+      return [
+        404,
+        { code: 404, status: false, message: 'Buku tidak ditemukan' },
+      ];
+    }
+
+    const response: IResponseEntity<Buku> = {
+      code: 200,
+      status: true,
+      message: 'Berhasil',
+      data: book,
+    };
+    return [200, response];
+  });
 };

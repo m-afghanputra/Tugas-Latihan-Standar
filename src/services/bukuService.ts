@@ -39,7 +39,8 @@ export const bukuService = {
     },
 
   getById: async (id: string): Promise<IResponseEntity<Buku>> => {
-    return { code: 200, status: true, message: 'Berhasil', data: findBook(id) };
+    const response = await api.get<IResponseEntity<Buku>>(`/buku/${id}`);
+  return response.data;
   },
 
   create: async (payload: BukuPayload): Promise<IResponseEntity<Buku>> => {
