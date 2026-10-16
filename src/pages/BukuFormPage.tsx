@@ -5,7 +5,8 @@ import * as z from 'zod';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBukuDetail, useMutateBuku } from '../hooks/useBuku';
 import { getErrorMessage } from '../lib/errorMessage';
-import { Button, Input, Card, message } from 'antd';
+import { Alert, Button, Input, Card, Spin, message } from 'antd';
+
 
 // Skema validasi menggunakan Zod
 const bukuSchema = z.object({
@@ -27,7 +28,7 @@ export default function BukuFormPage() {
   const isEditMode = id !== undefined;
 
   const mutateBuku = useMutateBuku();
-  const { data: detail } = useBukuDetail(id);
+  const { data: detail, isLoading, isError, error } = useBukuDetail(id);
 
   const {
     control,
@@ -60,6 +61,29 @@ export default function BukuFormPage() {
       message.error(getErrorMessage(error));
     }
   };
+
+  
+if  (isEditMode &&  isLoading) {
+  return (
+    <div className="flex justify-center p-8">
+      <Spin size="large" />
+    </div>
+  );
+}
+
+if (isEditMode && isError) {
+  return (
+    <div className="p-4 max-w-2xi mx-auto">
+      <Alert
+        type="error"
+        showIcon
+        title={getErrorMessage(error)}
+        action={<Button onClick={() => navigate('/')}>Kembali</Button>}
+      />
+    </div>
+  );
+}
+
 
   return (
     <div className="p-4 max-w-2xl mx-auto">
