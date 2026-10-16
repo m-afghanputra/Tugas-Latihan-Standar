@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import type { AxiosInstance } from 'axios';
-import type { Buku, IResponseEntity } from '../types';
+import type { Buku, BukuPayload, IResponseEntity } from '../types';
 
 const books: Buku[] = [
   { id: '1', judul: 'Laskar Pelangi', penulis: 'Andrea Hirata', tahun: 2005 },
@@ -19,6 +19,8 @@ const books: Buku[] = [
   },
   { id: '5', judul: 'Cantik Itu Luka', penulis: 'Eka Kurniawan', tahun: 2002 },
 ];
+
+let nextId = books.length + 1;
 
 export const setupMock = (api: AxiosInstance) => {
   const mock = new MockAdapter(api, { delayResponse: 300 });
@@ -61,4 +63,17 @@ export const setupMock = (api: AxiosInstance) => {
     };
     return [200, response];
   });
+
+  mock.onPost('/buku').reply((config) => {
+    const payload = JSON.parse(config.data as string) as BukuPayload;
+    const book: Buku = { id: String(nextId++), ...payload };
+    books.push(book);
+    const response: IResponseEntity<Buku> = {
+      code: 201,
+      status: true,
+      message: 'Buku berhasil ditambahkan',
+      data: book,
+    };
+    return [201, response]
+  })
 };

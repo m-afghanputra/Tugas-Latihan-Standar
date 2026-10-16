@@ -44,14 +44,8 @@ export const bukuService = {
   },
 
   create: async (payload: BukuPayload): Promise<IResponseEntity<Buku>> => {
-    const book: Buku = { id: String(nextId++), ...payload };
-    books = [...books, book];
-    return {
-      code: 201,
-      status: true,
-      message: 'Buku berhasil ditambahkan',
-      data: book,
-    };
+    const response = await api.post<IResponseEntity<Buku>>('/buku', payload);
+    return response.data;
   },
 
   update: async (
