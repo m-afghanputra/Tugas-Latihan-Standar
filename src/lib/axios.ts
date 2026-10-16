@@ -20,7 +20,7 @@ api.interceptors.request.use((config) => {
 });
 
 // Pakai sever palsu kalau VITE_USE_MOCK bernilai 'true'
-if (import.meta.env.ViTE_USE_MOCK === 'true') {
+if (import.meta.env.VITE_USE_MOCK === 'true') {
   setupMock(api);
 }
 

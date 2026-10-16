@@ -1,3 +1,4 @@
+import api from '../lib/axios.ts';
 import type { Buku, BukuPayload, IResponseEntity } from '../types';
 
 // sementara backend belum tersedia.
@@ -31,21 +32,11 @@ export const bukuService = {
     page: number,
     limit: number,
   ): Promise<IResponseEntity<Buku[]>> => {
-    const data = books.slice((page - 1) * limit, page * limit);
-    return {
-      code: 200,
-      status: true,
-      message: 'Berhasil mengambil data buku',
-      data,
-      meta: {
-        totalPages: Math.ceil(books.length / limit),
-        totalData: books.length,
-        totalDataPerPage: data.length,
-        page,
-        limit,
-      },
-    };
-  },
+      const response = await api.get<IResponseEntity<Buku[]>>('/buku', {
+        params: { page, limit },
+      });
+      return response.data;
+    },
 
   getById: async (id: string): Promise<IResponseEntity<Buku>> => {
     return { code: 200, status: true, message: 'Berhasil', data: findBook(id) };
