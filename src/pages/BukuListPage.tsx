@@ -24,18 +24,23 @@ export default function BukuListPage() {
     message.info('Anda telah keluar');
   };
 
-  const handleConfirmDelete = async () => {
-    if (!deletingBookId) return;
+const handleConfirmDelete = async () => {
+  if (!deletingBookId) return;
+ 
+  const isLastItemOnPage = data?.data?.length === 1 && page > 1;
 
-    try {
-      const response = await deleteBuku.mutateAsync(deletingBookId);
-      message.success(response.message);
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    } finally {
-      setDeletingBookId(null);
+  try {
+    const response = await deleteBuku.mutateAsync(deletingBookId);
+    message.success(response.message);
+    if (isLastItemOnPage) {
+      setPage(page -1 );
     }
-  };
+  } catch (error) {
+    message.error(getErrorMessage(error));
+  } finally {
+    setDeletingBookId(null);
+  }
+};
 
   const columns = useMemo<GridColDef<Buku>[]>(
     () => [
