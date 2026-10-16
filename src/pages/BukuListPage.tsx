@@ -24,48 +24,54 @@ export default function BukuListPage() {
     message.info('Anda telah keluar');
   };
 
-  const handleConfirmDelete = async () => {
-    if (!deletingBookId) return;
+const handleConfirmDelete = async () => {
+  if (!deletingBookId) return;
+ 
+  const isLastItemOnPage = data?.data?.length === 1 && page > 1;
 
-    try {
-      const response = await deleteBuku.mutateAsync(deletingBookId);
-      message.success(response.message);
-    } catch (error) {
-      message.error(getErrorMessage(error));
-    } finally {
-      setDeletingBookId(null);
+  try {
+    const response = await deleteBuku.mutateAsync(deletingBookId);
+    message.success(response.message);
+    if (isLastItemOnPage) {
+      setPage(page -1 );
     }
-  };
+  } catch (error) {
+    message.error(getErrorMessage(error));
+  } finally {
+    setDeletingBookId(null);
+  }
+};
 
-  const columns= useMemo<GridColDef<Buku>[]> (() => [
-    { headerName: 'Judul', field: 'judul', flex: 1, minWidth: 150 },
-    { headerName: 'Penulis', field: 'penulis', flex: 1, minWidth: 150 },
-    { headerName: 'Tahun', field: 'tahun', width: 100 },
-    {
-      headerName: 'Aksi',
-      field: 'aksi',
-      width: 160,
-      renderCell: (params) => (
-        <div className="space-x-2">
-          <Button
-            type="link"
-            onClick={() => navigate(`/buku/edit/${params.row.id}`)}
-          >
-            Edit
-          </Button>
-          <Button 
-            type="link"
-            danger
-            onClick={() => setDeletingBookId(params.row.id)}
-          >
-            Hapus
-          </Button>
-        </div>
-      ),
-    },
-  ],
-  [navigate]
-)
+  const columns = useMemo<GridColDef<Buku>[]>(
+    () => [
+      { headerName: 'Judul', field: 'judul', flex: 1, minWidth: 150 },
+      { headerName: 'Penulis', field: 'penulis', flex: 1, minWidth: 150 },
+      { headerName: 'Tahun', field: 'tahun', width: 100 },
+      {
+        headerName: 'Aksi',
+        field: 'aksi',
+        width: 160,
+        renderCell: (params) => (
+          <div className="space-x-2">
+            <Button
+              type="link"
+              onClick={() => navigate(`/buku/edit/${params.row.id}`)}
+            >
+              Edit
+            </Button>
+            <Button
+              type="link"
+              danger
+              onClick={() => setDeletingBookId(params.row.id)}
+            >
+              Hapus
+            </Button>
+          </div>
+        ),
+      },
+    ],
+    [navigate],
+  );
 
   return (
     <div className="p-4 max-w-6xl mx-auto">
@@ -84,7 +90,7 @@ export default function BukuListPage() {
       <Card>
         <DataGrid
           columns={columns}
-          rows={data?.data ?? []} 
+          rows={data?.data ?? []}
           loading={isLoading}
           hideFooter
         />
