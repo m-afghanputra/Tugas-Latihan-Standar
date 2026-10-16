@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
+import { setupMock } from '../mocks/setupMock';
 
 // Membuat instance axios pusat
 const api = axios.create({
@@ -17,5 +18,10 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Pakai sever palsu kalau VITE_USE_MOCK bernilai 'true'
+if (import.meta.env.ViTE_USE_MOCK === 'true') {
+  setupMock(api);
+}
 
 export default api;
