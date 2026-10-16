@@ -1,6 +1,6 @@
 import MockAdapter from 'axios-mock-adapter';
 import type { AxiosInstance } from 'axios';
-import type { Buku, BukuPayload, IResponseEntity } from '../types';
+import type { Buku, BukuPayload, IResponseEntity, LoginData } from '../types';
 
 const books: Buku[] = [
   { id: '1', judul: 'Laskar Pelangi', penulis: 'Andrea Hirata', tahun: 2005 },
@@ -117,6 +117,19 @@ mock.onPut(/\/buku\/\w+/).reply((config) => {
     status: true,
     message: 'Buku berhasil dihapus',
   };
-  return [200, response]
+  return [200, response];
+  });
+  
+  mock.onPost('/auth/login').reply(() => {
+    const response: IResponseEntity<LoginData> = {
+        code: 200,
+        status: true,
+        message: 'Login Berhasil!',
+        data: {
+        token: 'dummy-jwt-token-12345',
+        user: { id: '1', name: 'Peserta PKL LSKK' },
+      },
+    };
+  return [200, response];
 });
 };
