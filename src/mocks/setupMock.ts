@@ -75,5 +75,29 @@ export const setupMock = (api: AxiosInstance) => {
       data: book,
     };
     return [201, response]
-  })
+  });
+
+mock.onPut(/\/buku\/\w+/).reply((config) => {
+  const id = config.url?.split('/').pop();
+  const payload = JSON.parse(config.data as string) as BukuPayload;
+  const index = books.findIndex((item) => item.id === id);
+
+  if (index === -1) {
+    return [
+      404,
+      { code: 404, status: false, message: 'Buku tidak ditemukan' },
+    ];
+  }
+
+  const updated: Buku = { ...books[index], ...payload };
+  books[index] = updated;
+
+  const response: IResponseEntity<Buku> = {
+    code: 200,
+    status: true,
+    message: 'Buku berhasil diperbarui',
+    data: updated,
+  };
+  return [200, response];
+});
 };

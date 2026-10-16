@@ -19,7 +19,6 @@ let books: Buku[] = [
   },
   { id: '5', judul: 'Cantik Itu Luka', penulis: 'Eka Kurniawan', tahun: 2002 },
 ];
-let nextId = books.length + 1;
 
 const findBook = (id: string): Buku => {
   const book = books.find((item) => item.id === id);
@@ -52,14 +51,8 @@ export const bukuService = {
     id: string,
     payload: BukuPayload,
   ): Promise<IResponseEntity<Buku>> => {
-    const book: Buku = { ...findBook(id), ...payload };
-    books = books.map((item) => (item.id === id ? book : item));
-    return {
-      code: 200,
-      status: true,
-      message: 'Buku berhasil diperbarui',
-      data: book,
-    };
+    const response = await api.put<IResponseEntity<Buku>>(`/buku/${id}`, payload);
+    return response.data;
   },
 
   remove: async (id: string): Promise<IResponseEntity<undefined>> => {
